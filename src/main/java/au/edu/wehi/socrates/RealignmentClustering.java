@@ -336,10 +336,11 @@ public class RealignmentClustering {
 			if (SOCRATES.verbose) System.err.println("Starting clustering in: " + gi1.toString(fileInfo) + " ---> " + gi2.toString(fileInfo));
 			
 //			SamInputResource inputRealign =  new SamInputResource(realignedScBAMMemoryStream, realignedScIndexMemoryStream);
+//			System.out.println(SamStreams.sourceLikeBam(realignedScBAMMemoryStream));
 			SamInputResource realignInput = SamInputResource.of(realignedScBAMMemoryStream);
-			realignInput.index(realignedScIndexMemoryStream);
+			realignInput.index(realignedScIndexFile);
 			SamInputResource shortInput = SamInputResource.of(shortScBAMMemoryStream);
-			shortInput.index(shortScIndexMemoryStream);
+			shortInput.index(shortScIndexFile);
 			
 			realignReader = samReaderFactory.open(realignInput);
 			shortScReader = samReaderFactory.open(shortInput); 

@@ -19,10 +19,15 @@ public class RealignmentBAM {
 	public RealignmentBAM() {}
 
 	
-	public static void makeRealignmentBAM(String inputBAMFilename, String outputBamFilename) {
+	public static void makeRealignmentBAM(String inputBAMFilename, String outputBamFilename, Process bowtie) {
+		SamReader sam;
 		SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
-		SamReader sam = samReaderFactory.open(new File(inputBAMFilename));
-
+		if(inputBAMFilename.equals("-")){
+			SamInputResource realignInput = SamInputResource.of(bowtie.getInputStream());
+			sam = samReaderFactory.open(realignInput);
+		} else {
+			sam = samReaderFactory.open(new File(inputBAMFilename));
+		}
 		
 		ProgressVerbose p = new ProgressVerbose("Sorting alignments", 1000000, SOCRATES.verbose);
 		long mismatchRef = 0;
@@ -121,7 +126,7 @@ public class RealignmentBAM {
             System.err.println("\nAdd anchor information into re-alignment BAM file");
             System.err.println("  input BAM file:\t" + args[0] );
             System.err.println("  output BAM file:\t" + args[1] );
-			makeRealignmentBAM(args[0], args[1]);
+			makeRealignmentBAM(args[0], args[1], null);
 		}
 		else {
 			for (int i=0; i<args.length; i++)

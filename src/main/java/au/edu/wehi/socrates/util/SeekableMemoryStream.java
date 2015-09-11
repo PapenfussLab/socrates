@@ -85,7 +85,7 @@ public class SeekableMemoryStream extends SeekableStream {
 				idx++;
 				pos++;
 				read++;
-				if (pos>mem.length()) break; 
+				if (pos>=mem.length()) break; 
 			}
 		} else { // data spans multiple pages of memory
 			int oldPage = -1;

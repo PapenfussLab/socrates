@@ -1,6 +1,13 @@
 package au.edu.wehi.socrates;
 
+import java.awt.SystemColor;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -15,11 +22,30 @@ import org.apache.commons.cli.ParseException;
  */
 
 /**
+ * @author jibsch
  * @author hsu
  *
  * Created on Nov 7, 2012
  */
 public class SOCRATES {
+	
+	static String stripPathAndExtension (String str) {
+        // Handle null case specially.
+
+        if (str == null) return null;
+        
+        //Get position of last '/'
+        int pos1 = str.lastIndexOf("/");
+
+        // Get position of last '.'.
+        int pos2 = str.lastIndexOf(".");
+        // If there wasn't any '.' just return the string as is.
+        if (pos2 == -1) pos2 = str.length();
+        // Otherwise return the string, up to the dot.
+
+        return str.substring(pos1+1, pos2);
+    }
+	
 	public static boolean verbose = true;
 
 	public static void main(String[] args) {
@@ -128,37 +154,114 @@ public class SOCRATES {
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line = null;
 		try {
-		    // parse the command line arguments
 		    line = parser.parse( options, args );
 		    verbose = line.hasOption("verbose");
-
 		}
 		catch( ParseException exp ) {
 		    System.out.println( "Unexpected exception while parsing arguments:" + exp.getMessage() );
 		    System.exit(0);
 		}
+		
+		/* 
+		 * Parse all arguments
+		 */
+		int threads = line.hasOption("threads")? Integer.parseInt(line.getOptionValue("threads") ): default_threads;
+		int long_sc_len = line.hasOption("long-sc-len")? Integer.parseInt(line.getOptionValue("long-sc-len")) : default_long_sc_len;
+		int base_qual = line.hasOption("b")? Integer.parseInt(line.getOptionValue("b")) : default_base_quality;
+		int mapq = line.hasOption("q")? Integer.parseInt(line.getOptionValue("q")) : default_mapq;
+		int percent_id = line.hasOption("p")? Integer.parseInt(line.getOptionValue("p")) : default_percent_id;
+		int max_support = line.hasOption("max-support")? Integer.parseInt(line.getOptionValue("max-support")) : default_max_support;
+		int promiscuity = line.hasOption("promiscuity")? Integer.parseInt(line.getOptionValue("promiscuity")) : default_promiscuity;
+		int flank = line.hasOption("flank")? Integer.parseInt(line.getOptionValue("flank")) : default_flank;
+		boolean keep_duplicates = line.hasOption("keep-duplicates");
+		boolean no_short_scs = line.hasOption("no-short-sc-cluster");
+		boolean ideal_only = line.hasOption("ideal-only");
 
 		String index = line.getArgs()[0];
 		String bam = line.getArgs()[1];
+		
+		System.err.println("Starting up...");
+		
 		/*
 		 * Stratify the BAM file as a preprocessing step
 		 */
 		System.err.println("\nStratify BAM file " + bam );
+		System.err.println();
 		BAMStratifier b = new BAMStratifier(
 				bam, 
- 			    line.hasOption("threads")? Integer.parseInt(line.getOptionValue("threads") ): default_threads, 
-				line.hasOption("long-sc-len")? Integer.parseInt(line.getOptionValue("long-sc-len")) : default_long_sc_len, 
-				line.hasOption("b")? Integer.parseInt(line.getOptionValue("b")) : default_base_quality,
-				line.hasOption("q")? Integer.parseInt(line.getOptionValue("q")) : default_mapq,
-				line.hasOption("p")? Integer.parseInt(line.getOptionValue("p")) : default_percent_id,
-				line.hasOption("keep-duplicates")? true : false		, 
-				line.hasOption("no-short-sc-cluster")? true : false);
+ 			    threads, 
+				long_sc_len, 
+				base_qual,
+				mapq,
+				percent_id,
+				keep_duplicates, 
+				no_short_scs);
 	    b.stratifyAll();
 		
 	    /*
 	     * Realign the long soft clips with BT2
 	     */
-		
+	    String base = stripPathAndExtension(bam);
+	    String suffix = String.format("_long_sc_l%d_q%d_m%d_i%d" ,  long_sc_len, base_qual, mapq, percent_id );
+	    String long_sc_filestem = base+suffix, long_sc_fastq = long_sc_filestem+".fastq.gz", long_sc_bam = long_sc_filestem+".bam",
+	    		short_sc_bam = base+"_short_sc.bam", metrics = bam + ".metrics";
+
+	    ProcessBuilder pb = new ProcessBuilder("bowtie2",
+	    		"-p",
+	    		String.valueOf(threads),
+	    		"--local",
+	    		"-x",
+	    		index,
+	    		"-U",
+	    		long_sc_fastq);
+	    System.err.println("Realignment of long soft-clips: Running Bowtie2.");
+		System.err.println("Piping Bowtie2 output into RealignmentBAM...");
+			Process p;
+			try {
+				p = pb.start();
+
+				RealignmentBAM.makeRealignmentBAM("-", long_sc_bam, p);
+
+				InputStream es = p.getErrorStream();
+				InputStreamReader isr = new InputStreamReader(es);
+				BufferedReader br = new BufferedReader(isr);
+				String out;
+				while ((out = br.readLine()) != null) {
+					System.out.println(out);
+				}
+
+				p.waitFor();
+			} catch (IOException | InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    
+	    /*
+	     * Cluster the re-aligned soft clips.
+	     */
+	    System.err.println( "\nClustering re-alignments. Procducing output in results_Socrates_[paired/unpaired]..." );
+	    RealignmentClustering r = new RealignmentClustering(
+				long_sc_bam, 
+				short_sc_bam, 
+				metrics, 
+				threads /*threads*/, 
+				mapq /*minMapq*/, 
+				max_support /*maxSupport*/, 
+				long_sc_len,
+				percent_id,
+				promiscuity,
+				flank,
+				ideal_only /*idealOnly*/,
+				no_short_scs /*use short_sc_cluster*/);
+	    try {
+			r.clusterRealignedSC(null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    System.err.println("Socrates has run completely.");
+	    
 	}
 	
 }
