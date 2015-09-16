@@ -4,10 +4,10 @@ Authors: Jan Schröder, Arthur Hsu, Anthony T Papenfuss
 Date: 11.09.2015
 
 ---------
-Release 1.11 | Minor 
------------
-Release 1.1 | This is the first release depending on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/jibsch/socrates
------------
+Release 1.11
+
+Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/jibsch/socrates
+
 
 
 INSTALLATION:
