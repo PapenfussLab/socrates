@@ -3,8 +3,9 @@
 Authors: Jan Schröder, Arthur Hsu, Anthony T Papenfuss 
 Date: 11.09.2015
 
----------
+------------
 Release 1.11
+------------
 
 Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/jibsch/socrates
 
@@ -16,7 +17,7 @@ download the current release (socrates-1.11-jar-with-dependencies.jar) -- it con
 
 USAGE:
 
-run the jar file: *java -Xmx10g -jar socrates-1.1-jar-with-dependencies.jar*
+run the jar file: *java -Xmx10g -jar socrates-1.11-jar-with-dependencies.jar*
 (Xmx10g specifies the maximum memory usage for the java virtual machine, and has to be adjusted as necessary)
 this command runs the full Socrates pipeline. Each stage of the pipeline can be invoked individually.
 To call a Socrates subcommand, type: *java -Xmx10g -cp socrates-1.1-jar-with-dependencies.jar au.edu.wehi.socrates.[command] *
