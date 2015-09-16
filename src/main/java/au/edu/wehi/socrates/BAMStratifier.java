@@ -92,7 +92,7 @@ public class BAMStratifier {
 	 * @param rmdup - remove duplicated (by alignment position) reads
 	 * @param noAllSc - disable outputting of *all_sc.bam files, which are only used for visualization
 	 */
-	public BAMStratifier(String sourceFilename, int threads, 
+	public BAMStratifier(String sourceFilename, String metricsFile, int threads, 
 						 int scLengthThreshold, int scQualityThreshold, int minMapq, int minPercentIdentity, 
 						 boolean rmdup, boolean noAllSc) {
 		
@@ -109,7 +109,8 @@ public class BAMStratifier {
 //		reader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
 		sourceBAMInfo = new SAMFileInfo(reader);
 		// metrics file
-		File sourceBAMInfoFile = new File(sourceFilename+".metrics");
+		//File sourceBAMInfoFile = new File(sourceFilename+".metrics");
+		File sourceBAMInfoFile = new File(metricsFile);
 		// create metrics file in current directory if one is not found
 		if (!sourceBAMInfoFile.exists()) {
 			sourceBAMInfoFile = new File(sourceBAMFile.getName()+".metrics");
@@ -829,7 +830,7 @@ public class BAMStratifier {
             System.err.println("  min aligned percent identity = " + min_percent_id);
             System.err.println("  remove duplicates = " + rmdup);
             
-       		BAMStratifier b = new BAMStratifier(inputBAM, threads, max_long_sc, baseq, min_mapq, min_percent_id, rmdup, noAllSc);
+       		BAMStratifier b = new BAMStratifier(inputBAM, "", threads, max_long_sc, baseq, min_mapq, min_percent_id, rmdup, noAllSc);
     	    b.stratifyAll();
         } catch( ParseException exp ) {
 	        System.err.println( exp.getMessage() );

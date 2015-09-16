@@ -180,6 +180,11 @@ public class SOCRATES {
 		String index = line.getArgs()[0];
 		String bam = line.getArgs()[1];
 		
+		String base = stripPathAndExtension(bam);
+		    String suffix = String.format("_long_sc_l%d_q%d_m%d_i%d" ,  long_sc_len, base_qual, mapq, percent_id );
+		    String long_sc_filestem = base+suffix, long_sc_fastq = long_sc_filestem+".fastq.gz", long_sc_bam = long_sc_filestem+".bam",
+		    		short_sc_bam = base+"_short_sc.bam", metrics = base + ".bam.metrics";
+		
 		System.err.println("Starting up...");
 		
 		/*
@@ -189,6 +194,7 @@ public class SOCRATES {
 		System.err.println();
 		BAMStratifier b = new BAMStratifier(
 				bam, 
+				metrics,
  			    threads, 
 				long_sc_len, 
 				base_qual,
@@ -201,10 +207,6 @@ public class SOCRATES {
 	    /*
 	     * Realign the long soft clips with BT2
 	     */
-	    String base = stripPathAndExtension(bam);
-	    String suffix = String.format("_long_sc_l%d_q%d_m%d_i%d" ,  long_sc_len, base_qual, mapq, percent_id );
-	    String long_sc_filestem = base+suffix, long_sc_fastq = long_sc_filestem+".fastq.gz", long_sc_bam = long_sc_filestem+".bam",
-	    		short_sc_bam = base+"_short_sc.bam", metrics = bam + ".metrics";
 
 	    ProcessBuilder pb = new ProcessBuilder("bowtie2",
 	    		"-p",
