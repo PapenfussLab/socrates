@@ -4,7 +4,7 @@
   <groupId>au.edu.wehi</groupId>
   <artifactId>socrates</artifactId>
   <packaging>jar</packaging>
-  <version>1.1</version>
+  <version>1.11</version>
   <name>socrates</name>
   <url>http://github.com/PapenfussLab/socrates</url>
   <properties>
