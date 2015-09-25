@@ -22,8 +22,12 @@ public class RealignmentBAM {
 	public static void makeRealignmentBAM(String inputBAMFilename, String outputBamFilename, Process bowtie) {
 		SamReader sam;
 		SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
-		if(inputBAMFilename.equals("-")){
+		if(inputBAMFilename.equals("+")){
 			SamInputResource realignInput = SamInputResource.of(bowtie.getInputStream());
+			sam = samReaderFactory.open(realignInput);
+		}
+		else if(inputBAMFilename.equals("-")){
+			SamInputResource realignInput = SamInputResource.of(System.in);
 			sam = samReaderFactory.open(realignInput);
 		} else {
 			sam = samReaderFactory.open(new File(inputBAMFilename));

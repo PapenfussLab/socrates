@@ -222,7 +222,7 @@ public class SOCRATES {
 			try {
 				p = pb.start();
 
-				RealignmentBAM.makeRealignmentBAM("-", long_sc_bam, p);
+				RealignmentBAM.makeRealignmentBAM("+", long_sc_bam, p);
 
 				InputStream es = p.getErrorStream();
 				InputStreamReader isr = new InputStreamReader(es);
