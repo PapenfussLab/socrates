@@ -7,7 +7,7 @@ Date: 11.09.2015
 Release 1.11
 ------------
 
-Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/jibsch/socrates
+Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/PapenfussLab/socrates
 
 
 
