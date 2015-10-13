@@ -3,13 +3,13 @@
 Authors: Jan Schröder, Arthur Hsu, Anthony T Papenfuss 
 Date: 11.09.2015
 
-SOCRATES is a SV predictor that uses split reads to find breakpoints. It is optimized to be fast and extremely sensitive. SOCRATES is especially useful when you have some prior knowledge or hints about where the breakpoints are. The output may take a bit of filtering otherwise. For better prioritization, GRIDSS (https://github.com/PapenfussLab/GRIDSS) may be of interest.
+SOCRATES is a SV predictor that uses split reads to find breakpoints. It is optimized to be fast and extremely sensitive. SOCRATES is especially useful when you have some prior knowledge or hints about where the breakpoints are. The output may take a bit of filtering otherwise. If you are interested in more prioritization of SVs, GRIDSS (https://github.com/PapenfussLab/GRIDSS) may be of interest.
 
 ------------
 Release 1.11
 ------------
 
-Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/PapenfussLab/socrates
+Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/jibsch/socrates.
 
 
 
