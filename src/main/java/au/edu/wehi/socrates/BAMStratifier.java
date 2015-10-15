@@ -780,6 +780,13 @@ public class BAMStratifier {
 				.withLongOpt( "base-quality" )
 				.create( 'b' );
 		
+		Option region = OptionBuilder.withArgName( "region" )
+				.hasArg()
+				.withDescription("Semicolon separated list of chromosomes to be stratifeid by this task [default: null (all)]")
+				.withType( String.class )
+				.withLongOpt( "region" )
+				.create( 'r' );
+		
 		options.addOption( threads );
 		options.addOption( mapq );
 		options.addOption( noAllSc );
@@ -787,6 +794,7 @@ public class BAMStratifier {
 		options.addOption( percent_id );
 		options.addOption( base_quality );
         options.addOption( keep_duplicate );
+        options.addOption(region);
 		options.addOption(verbose);
 		options.addOption(help);
 	}
@@ -811,6 +819,7 @@ public class BAMStratifier {
 			int min_percent_id = cmd.hasOption("percent-id") ? ((Number)cmd.getParsedOptionValue("percent-id")).intValue() : 95;
 			boolean rmdup = cmd.hasOption("keep-duplicate") ? false : true;
 			boolean noAllSc = cmd.hasOption("no-all-sc") ? true : false;
+			String chromosome = cmd.hasOption("region") ? ((String)cmd.getParsedOptionValue("region")) : null;
             SOCRATES.verbose = cmd.hasOption("verbose");
 
             String[] remainingArgs = cmd.getArgs();
@@ -831,7 +840,10 @@ public class BAMStratifier {
             System.err.println("  remove duplicates = " + rmdup);
             
        		BAMStratifier b = new BAMStratifier(inputBAM, "", threads, max_long_sc, baseq, min_mapq, min_percent_id, rmdup, noAllSc);
-    	    b.stratifyAll();
+       		if(chromosome == null)
+       			b.stratifyAll();
+       		else 
+       			b.stratify(chromosome);
         } catch( ParseException exp ) {
 	        System.err.println( exp.getMessage() );
 	        printHelp();

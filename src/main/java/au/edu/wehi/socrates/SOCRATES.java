@@ -143,7 +143,7 @@ public class SOCRATES {
 		// automatically generate the help statement
 		if(args.length < 2){
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp( "Socrates all [Options] <bowtie2_index> <input_bam>\n\n"
+			formatter.printHelp( "[Options] <bowtie2_index> <input_bam>\n\n"
 				+"positional arguments:\n"
 				+"\tbowtie2_index\t\tThe Bowtie2 index to the reference genome (the chromosome names have to be identical to those in the BAM file.\n"
 				+"\tinput_bam\t\tThe input BAM file that Socrates runs on\n\noptions:" , options );

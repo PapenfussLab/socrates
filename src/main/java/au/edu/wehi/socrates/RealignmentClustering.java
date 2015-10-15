@@ -311,20 +311,16 @@ public class RealignmentClustering {
 	class ClusteringWorker implements Callable<ResultCounter> {
 		public int threadID, lflank1=0, rflank1=0, lflank2=0, rflank2=0;
 		private GenomicIndexInterval gi1, gi2;
-		private SeekableStream realignedScBAMMemoryStream;
-		private SeekableStream shortScBAMMemoryStream;
-		private SeekableMemoryStream realignedScIndexMemoryStream;
-		private SeekableMemoryStream shortScIndexMemoryStream;
 		
 		ClusteringWorker(int id, GenomicIndexInterval one, GenomicIndexInterval two) {
 			gi1 = one; gi2 = two; threadID = id;
-			realignedScBAMMemoryStream = new SeekableMemoryStream(memoryRealignBAM);
-			shortScBAMMemoryStream     = new SeekableMemoryStream(memoryShortScBAM);
-			realignedScIndexMemoryStream = new SeekableMemoryStream(memoryRealignIndex);
-			shortScIndexMemoryStream     = new SeekableMemoryStream(memoryShortScIndex);
 		}
 		
 		public ResultCounter call() throws Exception {
+
+			SeekableStream realignedScBAMMemoryStream = new SeekableMemoryStream(memoryRealignBAM);
+			SeekableStream shortScBAMMemoryStream     = new SeekableMemoryStream(memoryShortScBAM);
+			
 			TreeSet<RealignmentCluster> clusters = new TreeSet<RealignmentCluster>();
 			ResultCounter counter = new ResultCounter();
 						
