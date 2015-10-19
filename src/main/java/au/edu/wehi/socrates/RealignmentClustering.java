@@ -790,6 +790,11 @@ public class RealignmentClustering {
 				.withType( Number.class )
 				.withLongOpt( "flank" )
 				.create( 'f' );
+		Option region = OptionBuilder.withArgName( "region" )
+				.hasArg()
+				.withDescription("Semicolon separated list of chromosomes to be analysed by this task -- all interactions between the given regions are analysed. [default: null (all)]")
+				.withLongOpt( "region" )
+				.create( 'r' );
 		
 		options.addOption( threads );
 		options.addOption( ideal );
@@ -802,6 +807,7 @@ public class RealignmentClustering {
 		options.addOption( no_short_sc_cluster );
 		options.addOption(verbose);
 		options.addOption(help);
+		options.addOption(region);
 	}
 	
 	public static void printHelp() {
@@ -836,7 +842,7 @@ public class RealignmentClustering {
 			String realignedSc = remainingArgs[0];
 			String shortSc = remainingArgs[1];
 			String metrics = remainingArgs[2];
-			String region = remainingArgs.length>=4 ? remainingArgs[3] : null;
+			String region = cmd.hasOption("region") ? ((String)cmd.getParsedOptionValue("region")) : null;
 
             System.err.println( "\nClustering re-alignments." );
             System.err.println( "  search for short soft clip cluster: " + short_sc_cluster );
@@ -864,11 +870,11 @@ public class RealignmentClustering {
 					ideal /*idealOnly*/,
 					short_sc_cluster /*use short_sc_cluster*/);
 
-			if (region!=null && region.length()>=1 && region.matches("[0-9]+")) {
-				int rsize = Integer.parseInt(region);
-                System.err.println( "  using bucket size: " + rsize );
-				if (rsize>0) r.clusterRealignedSC(Integer.parseInt(region));
-				else r.clusterRealignedSC(null);
+			if (region!=null) {
+//				int rsize = Integer.parseInt(region);
+//                System.err.println( "  using bucket size: " + rsize );
+//				if (rsize>0) r.clusterRealignedSC(Integer.parseInt(region));
+				r.clusterRealignedSC(region);
 			}
 			else {
                 r.clusterRealignedSC(null);
