@@ -4,7 +4,7 @@ Authors: Jan Schröder, Arthur Hsu, Anthony T Papenfuss
 Date: 11.09.2015
 
 ------------
-Release 1.11
+Release 1.13
 ------------
 
 Releases from 1.1 onward depend on java 1.8. If Java 1.8 is not an option, please use the old release on https://github.com/jibsch/socrates
