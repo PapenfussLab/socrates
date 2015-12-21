@@ -165,17 +165,29 @@ public class SOCRATES {
 		/* 
 		 * Parse all arguments
 		 */
+			String config = "Running Socrates with the following options:\n";
 		int threads = line.hasOption("threads")? Integer.parseInt(line.getOptionValue("threads") ): default_threads;
+			config += "\tthreads: "+threads+"\n";
 		int long_sc_len = line.hasOption("long-sc-len")? Integer.parseInt(line.getOptionValue("long-sc-len")) : default_long_sc_len;
+			config += "\tlong-sc-len: "+long_sc_len+"\n";
 		int base_qual = line.hasOption("b")? Integer.parseInt(line.getOptionValue("b")) : default_base_quality;
+			config += "\tminimum base quality: "+base_qual+"\n";
 		int mapq = line.hasOption("q")? Integer.parseInt(line.getOptionValue("q")) : default_mapq;
+			config += "\tminimum mapping quality: "+mapq+"\n";
 		int percent_id = line.hasOption("p")? Integer.parseInt(line.getOptionValue("p")) : default_percent_id;
+			config += "\tminimum consensus identity: "+percent_id+"\n";
 		int max_support = line.hasOption("max-support")? Integer.parseInt(line.getOptionValue("max-support")) : default_max_support;
+			config += "\tsupport cutoff: "+max_support+"\n";
 		int promiscuity = line.hasOption("promiscuity")? Integer.parseInt(line.getOptionValue("promiscuity")) : default_promiscuity;
+			config += "\tmaximum promiscuity: "+promiscuity+"\n";
 		int flank = line.hasOption("flank")? Integer.parseInt(line.getOptionValue("flank")) : default_flank;
+			config += "\tflanking distance: "+flank+"\n";
 		boolean keep_duplicates = line.hasOption("keep-duplicates");
+			config += "\tkeeping duplicates: "+keep_duplicates+"\n";
 		boolean no_short_scs = line.hasOption("no-short-sc-cluster");
+			config += "\tno short sc cluster pairs: "+no_short_scs+"\n";
 		boolean ideal_only = line.hasOption("ideal-only");
+			config += "\tideal cluster pairs only: "+ideal_only+"\n";
 
 		String index = line.getArgs()[0];
 		String bam = line.getArgs()[1];
@@ -186,6 +198,7 @@ public class SOCRATES {
 		    		short_sc_bam = base+"_short_sc.bam", metrics = base + ".bam.metrics";
 		
 		System.err.println("Starting up...");
+		System.err.println(config);
 		
 		/*
 		 * Stratify the BAM file as a preprocessing step
@@ -254,7 +267,7 @@ public class SOCRATES {
 				promiscuity,
 				flank,
 				ideal_only /*idealOnly*/,
-				no_short_scs /*use short_sc_cluster*/);
+				!no_short_scs /*use short_sc_cluster*/);
 	    try {
 			r.clusterRealignedSC(null);
 		} catch (IOException e) {
