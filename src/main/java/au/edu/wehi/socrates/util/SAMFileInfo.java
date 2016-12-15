@@ -1,15 +1,16 @@
 package au.edu.wehi.socrates.util;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SAMSequenceRecord;
-import htsjdk.samtools.SamReader;
 
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
@@ -48,9 +49,9 @@ public class SAMFileInfo {
 	}
 	
 	public SAMFileInfo(String readerFilename) {
-		SAMFileReader reader = new SAMFileReader(new File(readerFilename));
+		SamReader reader = SamReaderFactory.makeDefault().open(new File(readerFilename));
 		SAMFileHeader header = reader.getFileHeader();
-		
+	
 		// add library IDs
 		for (SAMReadGroupRecord rg : header.getReadGroups()) {
 			libraries.add( rg.getReadGroupId() );
@@ -65,7 +66,12 @@ public class SAMFileInfo {
 			sequenceName2ID.put(sname, s.getSequenceIndex());
 			sequenceID2Name.put(s.getSequenceIndex(), sname);
 		}
-		reader.close();
+		try {
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public int getSequenceLength(int seqIndex) {

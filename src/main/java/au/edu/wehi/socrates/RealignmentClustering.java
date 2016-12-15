@@ -320,6 +320,8 @@ public class RealignmentClustering {
 
 			SeekableStream realignedScBAMMemoryStream = new SeekableMemoryStream(memoryRealignBAM);
 			SeekableStream shortScBAMMemoryStream     = new SeekableMemoryStream(memoryShortScBAM);
+			SeekableStream realignedIndexBAMMemoryStream = new SeekableMemoryStream(memoryRealignIndex);
+			SeekableStream shortIndexBAMMemoryStream     = new SeekableMemoryStream(memoryShortScIndex);
 			
 			TreeSet<RealignmentCluster> clusters = new TreeSet<RealignmentCluster>();
 			ResultCounter counter = new ResultCounter();
@@ -334,9 +336,9 @@ public class RealignmentClustering {
 //			SamInputResource inputRealign =  new SamInputResource(realignedScBAMMemoryStream, realignedScIndexMemoryStream);
 //			System.out.println(SamStreams.sourceLikeBam(realignedScBAMMemoryStream));
 			SamInputResource realignInput = SamInputResource.of(realignedScBAMMemoryStream);
-			realignInput.index(realignedScIndexFile);
+			realignInput.index(realignedIndexBAMMemoryStream);
 			SamInputResource shortInput = SamInputResource.of(shortScBAMMemoryStream);
-			shortInput.index(shortScIndexFile);
+			shortInput.index(shortIndexBAMMemoryStream);
 			
 			realignReader = samReaderFactory.open(realignInput);
 			shortScReader = samReaderFactory.open(shortInput); 
@@ -420,6 +422,8 @@ public class RealignmentClustering {
 			counter.unpaired = unpair;
 			counter.closeWriters();
 			
+			realignedIndexBAMMemoryStream.close();
+			shortIndexBAMMemoryStream.close();
 			realignReader.close();
 			shortScReader.close();
 

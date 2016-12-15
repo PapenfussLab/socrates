@@ -187,7 +187,7 @@ public class AddFilteringInfo {
 
 
    private static double[] getAnchorInsertStats(
-			String chr, int start, String dir, SAMFileReader bamFile, int lowerInsertBound, int upperInsertBound, int readlen, int minimumMappingQuality, int longScLength) {
+			String chr, int start, String dir, SamReader bamFile, int lowerInsertBound, int upperInsertBound, int readlen, int minimumMappingQuality, int longScLength) {
 
       double insertSize=0;
       double insertSizeMean=0;
@@ -253,7 +253,7 @@ public class AddFilteringInfo {
 
 
 	private static int getSpanningCount(
-			String bp1chr, int bp1start, String bp1dir, String bp2chr, int bp2start, String bp2dir,SAMFileReader bamFile, int lowerInsertBound, int upperInsertBound, int readlen) {
+			String bp1chr, int bp1start, String bp1dir, String bp2chr, int bp2start, String bp2dir,SamReader bamFile, int lowerInsertBound, int upperInsertBound, int readlen) {
 		String chr;
                 int start;
                 int end;
@@ -332,9 +332,10 @@ public class AddFilteringInfo {
       //int readlen = 100;
 	int readlen = (int) stats[2];
 		//System.out.println(bamfilename);	
-		final SAMFileReader reader = new SAMFileReader(bamfile);
-	        reader.setValidationStringency(ValidationStringency.SILENT);	
-		
+		final SamReader reader = SamReaderFactory.makeDefault()
+			.validationStringency(ValidationStringency.SILENT)
+			.open(bamfile);
+
 		BufferedReader vars = new BufferedReader(new FileReader(allArgs[1]));
 		String line;
 

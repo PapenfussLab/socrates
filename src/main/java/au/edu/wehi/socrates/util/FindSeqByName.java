@@ -29,7 +29,7 @@ public class FindSeqByName implements Callable<SAMRecord> {
 			pool = Executors.newFixedThreadPool(threads);
 			
 			// prep tasks
-			final SAMFileReader reader = new SAMFileReader(new File(bamFilename));
+			final SamReader reader = SamReaderFactory.makeDefault().open(new File(bamFilename));
 			final SAMSequenceDictionary dict = reader.getFileHeader().getSequenceDictionary();
 			ArrayList< Callable<SAMRecord> > tasks = new ArrayList<Callable<SAMRecord>>();
 			for (SAMSequenceRecord sq : dict.getSequences()) {
@@ -56,7 +56,7 @@ public class FindSeqByName implements Callable<SAMRecord> {
 	public SAMRecord call() {
 		SAMRecord match = null;
 		try {
-			SAMFileReader sam = new SAMFileReader(new File(filename));
+			SamReader sam = SamReaderFactory.makeDefault().open(new File(filename));
 			SAMRecordIterator iter = sam.queryOverlapping(chrom, 1, chromLen);
 	
 			while (iter.hasNext()) {
