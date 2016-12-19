@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import htsjdk.samtools.BAMRecordCodec;
 import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader.SortOrder;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
@@ -105,6 +106,11 @@ public class BAMStratifier {
 		// open BAM reader
 		SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
 		SamReader reader = samReaderFactory.open(sourceBAMFile);
+		
+		if(reader.getFileHeader().getSortOrder() != SortOrder.coordinate){
+			System.err.println("Warning from BAMStratifier: Input bam file does not appear to be sorted according to bam header. This will lead to problems when indexing short SC bam file.");
+		}
+		
 		//SAMFileReader reader = new SAMFileReader( sourceBAMFile );
 //		reader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
 		sourceBAMInfo = new SAMFileInfo(reader);
@@ -314,6 +320,7 @@ public class BAMStratifier {
 		public OutputFiles call() throws Exception {
 			// prepare output files
 			outputs = new OutputFiles(seqName, sourceBAM.getFileHeader());
+			
 			
 			int c = 0;
 			while (iterator.hasNext()) {
